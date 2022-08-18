@@ -33,7 +33,7 @@ class Enemy extends Character {
 					i--;
 					this.health = 100;
 					console.log(
-						`${this.name} took the food! Its health resets to 100!`
+						`${this.name} took the ${item.name}! Its health resets to 100!`
 					);
 					this.cooldown += 1000;
 				}
@@ -42,7 +42,7 @@ class Enemy extends Character {
 	}
 
 	randomMove() {
-		let directions = Object.keys(this.currentRoom.exits);
+		let directions = this.currentRoom.getExits();
 		let min = 0;
 		let max = directions.length - 1;
 		let indexRandom = Math.floor(Math.random() * (max - min + 1) + min);
