@@ -16,6 +16,7 @@ class Enemy extends Character {
 		// Wait until cooldown expires, then act
 		const resetCooldown = () => {
 			// HA: Must use arrow function here? Why?
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
 			this.cooldown = 0;
 			this.act();
 		};
