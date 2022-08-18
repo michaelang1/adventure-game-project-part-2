@@ -1,75 +1,94 @@
-const {Character} = require('./character');
-const {Enemy} = require('./enemy');
-const {Food} = require('./food');
+const { Character } = require('./character');
+const { Enemy } = require('./enemy');
+const { Food } = require('./food');
 
 class Player extends Character {
+	constructor(name, startingRoom) {
+		super(name, 'main character', startingRoom);
+	}
 
-  constructor(name, startingRoom) {
-    super(name, "main character", startingRoom);
-  }
+	move(direction) {
+		const nextRoom = this.currentRoom.getRoomInDirection(direction);
 
-  move(direction) {
+		// If the next room is valid, set the player to be in that room
+		if (nextRoom) {
+			this.currentRoom = nextRoom;
 
-    const nextRoom = this.currentRoom.getRoomInDirection(direction);
+			nextRoom.printRoom(this);
+		} else {
+			console.log('You cannot move in that direction');
+		}
+	}
 
-    // If the next room is valid, set the player to be in that room
-    if (nextRoom) {
-      this.currentRoom = nextRoom;
+	printInventory() {
+		if (this.items.length === 0) {
+			console.log(`${this.name} is not carrying anything.`);
+		} else {
+			console.log(`${this.name} is carrying:`);
+			for (let i = 0; i < this.items.length; i++) {
+				console.log(`  ${this.items[i].name}`);
+			}
+		}
+	}
 
-      nextRoom.printRoom(this);
-    } else {
-      console.log("You cannot move in that direction");
-    }
-  }
+	takeItem(itemName) {
+		for (let i = 0; i < this.currentRoom.items.length; i++) {
+			let item = this.currentRoom.items[i];
+			if (item.name === itemName) {
+				this.items.push(item);
+				this.currentRoom.items.splice(i, 1);
+				i--;
+			}
+		}
+	}
 
-  printInventory() {
-    if (this.items.length === 0) {
-      console.log(`${this.name} is not carrying anything.`);
-    } else {
-      console.log(`${this.name} is carrying:`);
-      for (let i = 0 ; i < this.items.length ; i++) {
-        console.log(`  ${this.items[i].name}`);
-      }
-    }
-  }
+	dropItem(itemName) {
+		for (let i = 0; i < this.items.length; i++) {
+			let item = this.items[i];
+			if (item.name === itemName) {
+				this.currentRoom.items.push(item);
+				this.items.splice(i, 1);
+				i--;
+			}
+		}
+	}
 
-  takeItem(itemName) {
+	eatItem(itemName) {
+		for (let i = 0; i < this.items.length; i++) {
+			let item = this.items[i];
+			if (item instanceof Food && item.name === itemName) {
+				this.items.splice(i, 1);
+				i--;
+				this.health = 100;
+				console.log('Your health resets to 100!');
+			}
+		}
+	}
 
-    // Fill this in
+	getItemByName(name) {
+		for (let item of this.items) {
+			if (item.name === name) return item;
+		}
+	}
 
-  }
+	hit(name) {
+		let enemy = this.currentRoom.getEnemyByName(name);
+		if (enemy !== undefined) {
+			enemy.applyDamage(this.strength);
+			enemy.attackTarget = this;
+			console.log(`Bam! You hit ${enemy.name} (${enemy.health} / 100)!`);
+		} else {
+			console.log(`Oops! ${name} has just left the room!`);
+		}
+	}
 
-  dropItem(itemName) {
-
-    // Fill this in
-
-  }
-
-  eatItem(itemName) {
-
-    // Fill this in
-
-  }
-
-  getItemByName(name) {
-
-    // Fill this in
-
-  }
-
-  hit(name) {
-
-    // Fill this in
-
-  }
-
-  die() {
-    console.log("You are dead!");
-    process.exit();
-  }
-
+	die() {
+		super.die();
+		console.log('You are dead...');
+		process.exit();
+	}
 }
 
 module.exports = {
-  Player,
+	Player,
 };

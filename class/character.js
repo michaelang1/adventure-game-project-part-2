@@ -1,20 +1,25 @@
 class Character {
+	constructor(name, description, currentRoom) {
+		this.name = name;
+		this.description = description;
+		this.currentRoom = currentRoom;
+		this.items = [];
+		this.health = 100;
+		this.strength = 10;
+	}
 
-  constructor(name, description, currentRoom) {
-    // Fill this in
+	applyDamage(amount) {
+		this.health -= amount;
+		if (this.health <= 0) this.die();
+	}
 
-  }
-
-  applyDamage(amount) {
-    // Fill this in
-  }
-
-  die() {
-    // Fill this in
-  }
-
+	die() {
+		this.currentRoom.items = this.currentRoom.items.concat(this.items);
+		this.items.splice(0, this.items.length);
+		this.currentRoom = null;
+	}
 }
 
 module.exports = {
-  Character,
+	Character,
 };
